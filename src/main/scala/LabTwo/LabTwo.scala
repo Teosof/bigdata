@@ -2,11 +2,12 @@ package LabTwo
 
 import org.apache.log4j.Level.WARN
 import org.apache.log4j.LogManager
+import org.apache.spark.broadcast.Broadcast
 import org.apache.spark.rdd.RDD
 import org.apache.spark.{SparkConf, SparkContext}
 
 object LabTwo {
-  val PATH: String = "src/main/scala/LabTwo/var.txt"
+  val PATH: String = "src/main/scala/LabTwo"
   val NODES: Int = 3
 
   def main(args: Array[String]): Unit = {
@@ -14,11 +15,25 @@ object LabTwo {
     val sc: SparkContext = new SparkContext(conf)
     LogManager.getRootLogger.setLevel(WARN)
 
-    val rdd: RDD[String] = sc.textFile(PATH)
+    val input: RDD[String] = sc.textFile(s"$PATH/var.txt")
+    val stopWordsInput: RDD[String] = sc.textFile(s"$PATH/stopwords.csv")
+    remove_stop_words(sc, input, stopWordsInput)
 
+    val most: RDD[(Int, String)] = common_words(sc, input, order = false)
+    val least: RDD[(Int, String)] = common_words(sc, input, order = true)
 
-    val most: RDD[(Int, String)] = common_words(sc, rdd, order = true)
-    val least: RDD[(Int, String)] = common_words(sc, rdd, order = false)
+    most.foreach(println)
+    least.foreach(println)
+  }
+
+  private def remove_stop_words(sc: SparkContext, input: RDD[String], stopWordsInput: RDD[String]): RDD[String] = {
+    // Flatten, collect, and broadcast.
+    val stopWords: RDD[String] = stopWordsInput.flatMap(x => x.split(",")).map(_.trim)
+    val broadcastStopWords: Broadcast[Set[String]] = sc.broadcast(stopWords.collect.toSet)
+
+    // Split using a regular expression that extracts words
+    val wordsWithStopWords: RDD[String] = input.flatMap(x => x.split("\\W+"))
+    wordsWithStopWords.filter(!broadcastStopWords.value.contains(_))
   }
 
   private def common_words(sc: SparkContext, rdd: RDD[String], order: Boolean): RDD[(Int, String)] = {
