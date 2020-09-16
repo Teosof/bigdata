@@ -16,8 +16,8 @@ object LabTwo {
     LogManager.getRootLogger.setLevel(WARN)
 
     val input: RDD[String] = parse(context)
-    val stopWordsInput: RDD[String] = context.textFile(s"$PATH/stop.csv")
-    val text: RDD[String] = stop(context, input, stopWordsInput)
+    val words: RDD[String] = context.textFile(s"$PATH/stop.csv")
+    val text: RDD[String] = stop(context, input, words)
 
     val most: RDD[(Int, String)] = common(context, text, ascending = false)
     val least: RDD[(Int, String)] = common(context, text, ascending = true)
