@@ -22,7 +22,7 @@ public class TestApp {
             return;
         }
 
-        Class stemClass = Class.forName("org.tartarus.snowball.ext." +
+        Class<?> stemClass = Class.forName("org.tartarus.snowball.ext." +
                 args[0] + "Stemmer");
         SnowballStemmer stemmer = (SnowballStemmer) stemClass.newInstance();
 
@@ -30,7 +30,7 @@ public class TestApp {
         reader = new InputStreamReader(new FileInputStream(args[1]));
         reader = new BufferedReader(reader);
 
-        StringBuffer input = new StringBuffer();
+        StringBuilder input = new StringBuilder();
 
         OutputStream outstream;
 
@@ -52,11 +52,10 @@ public class TestApp {
             repeat = Integer.parseInt(args[4]);
         }
 
-        Object[] emptyArgs = new Object[0];
         int character;
         while ((character = reader.read()) != -1) {
             char ch = (char) character;
-            if (Character.isWhitespace((char) ch)) {
+            if (Character.isWhitespace(ch)) {
                 if (input.length() > 0) {
                     stemmer.setCurrent(input.toString());
                     for (int i = repeat; i != 0; i--) {
