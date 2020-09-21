@@ -1,3 +1,6 @@
+[![EO principles respected here](https://www.elegantobjects.org/badge.svg)](https://www.elegantobjects.org)
+[![We recommend IntelliJ IDEA](https://www.elegantobjects.org/intellij-idea.svg)](https://www.jetbrains.com/idea/)
+
 [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=Teosof_bigdata&metric=bugs)](https://sonarcloud.io/dashboard?id=Teosof_bigdata)
 [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=Teosof_bigdata&metric=code_smells)](https://sonarcloud.io/dashboard?id=Teosof_bigdata)
 [![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=Teosof_bigdata&metric=duplicated_lines_density)](https://sonarcloud.io/dashboard?id=Teosof_bigdata)
@@ -8,4 +11,4 @@
 [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=Teosof_bigdata&metric=security_rating)](https://sonarcloud.io/dashboard?id=Teosof_bigdata)
 [![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=Teosof_bigdata&metric=sqale_index)](https://sonarcloud.io/dashboard?id=Teosof_bigdata)
 [![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=Teosof_bigdata&metric=vulnerabilities)](https://sonarcloud.io/dashboard?id=Teosof_bigdata)
-[![SonarCloud](https://sonarcloud.io/images/project_badges/sonarcloud-orange.svg)](https://sonarcloud.io/dashboard?id=Teosof_bigdata)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
