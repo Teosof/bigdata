@@ -1,14 +1,10 @@
 package LabTwo
 
-import java.io._
-
 import org.apache.log4j.Level.WARN
 import org.apache.log4j.LogManager
 import org.apache.spark.rdd.RDD
 import org.apache.spark.{SparkConf, SparkContext}
 import org.tartarus.snowball.SnowballStemmer
-
-import scala.collection.mutable
 
 object LabTwo {
   val PATH: String = "src/main/data"
@@ -18,7 +14,6 @@ object LabTwo {
   def main(args: Array[String]): Unit = {
     val conf: SparkConf = new SparkConf().setAppName("Lab2").setMaster(s"local[$NODES]")
     val sc: SparkContext = new SparkContext(conf)
-    //    val ssc = new StreamingContext(conf, Seconds(1))
     LogManager.getRootLogger.setLevel(WARN)
 
     val book: RDD[String] = sc.textFile(s"$PATH/var.txt")
@@ -38,7 +33,7 @@ object LabTwo {
     val stemClass: Class[_] = Class.forName("org.tartarus.snowball.ext.russianStemmer")
     val stemmer: SnowballStemmer = stemClass.newInstance.asInstanceOf[SnowballStemmer]
 
-    stemmer.setCurrent(book.toString) // TODO: change rdd[string] to string
+    stemmer.setCurrent(book.mapPartitions(_ => (stop.iterator)).collect.mkString("Array(", ", ", ")")) // TODO: change rdd[string] to string
     stemmer.stem
     println(stemmer.getCurrent)
   }
