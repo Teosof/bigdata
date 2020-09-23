@@ -24,7 +24,7 @@ public class TestApp {
 
         StringBuilder input = new StringBuilder();
 
-        OutputStream outstream;
+        OutputStream outstream = System.out;
 
         if (args.length > 2) {
             if (args.length >= 4 && args[2].equals("-o")) {
@@ -50,9 +50,7 @@ public class TestApp {
             if (Character.isWhitespace(ch)) {
                 if (input.length() > 0) {
                     stemmer.setCurrent(input.toString());
-                    for (int i = repeat; i != 0; i--) {
-                        stemmer.stem();
-                    }
+                    for (int i = repeat; i != 0; i--) stemmer.stem();
                     output.write(stemmer.getCurrent());
                     output.write('\n');
                     input.delete(0, input.length());

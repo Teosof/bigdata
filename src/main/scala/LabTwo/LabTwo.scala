@@ -1,11 +1,14 @@
 package LabTwo
 
 import java.io._
+
 import org.apache.log4j.Level.WARN
 import org.apache.log4j.LogManager
 import org.apache.spark.rdd.RDD
 import org.apache.spark.{SparkConf, SparkContext}
 import org.tartarus.snowball.SnowballStemmer
+
+import scala.collection.mutable
 
 object LabTwo {
   val PATH: String = "src/main/data"
@@ -32,16 +35,12 @@ object LabTwo {
     //    val least: Array[(String, Int)] = popular(text = text, ascending = true)
     //    least.foreach(println)
 
-    val stemClass = Class.forName("org.tartarus.snowball.ext.russianStemmer")
-    val stemmer = stemClass.newInstance.asInstanceOf[SnowballStemmer]
-    var reader = new BufferedReader(new InputStreamReader(new FileInputStream(s"$PATH/var.txt")))
+    val stemClass: Class[_] = Class.forName("org.tartarus.snowball.ext.russianStemmer")
+    val stemmer: SnowballStemmer = stemClass.newInstance.asInstanceOf[SnowballStemmer]
 
-    val input = new StringBuilder
-
-    var outstream = null
-
-    var output = new BufferedWriter(new OutputStreamWriter(outstream))
-    output.flush()
+    stemmer.setCurrent(book.toString) // TODO: change rdd[string] to string
+    stemmer.stem
+    println(stemmer.getCurrent)
   }
 
   private def popular(text: RDD[(String, Int)], ascending: Boolean): Array[(String, Int)] = {
