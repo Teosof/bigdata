@@ -9,6 +9,7 @@ object LabTwo {
   val PATH: String = "src/main/scala/LabTwo"
   val NODES: Int = 3
 
+  // TODO: map partions
   def main(args: Array[String]): Unit = {
     val conf: SparkConf = new SparkConf().setAppName("Lab2").setMaster(s"local[$NODES]")
     val sc: SparkContext = new SparkContext(conf)
@@ -19,8 +20,6 @@ object LabTwo {
     //    val source: BufferedSource = Source.fromFile(s"$PATH/stop.txt")
     //    val stop: Array[String] = try source.mkString.split("\n") finally source.close()
     val stop: Array[String] = Array("бы", "он", "быть", "в", "весь", "вот", "все", "всей", "что", "он", "как", "но", "это", "не", "на", "его", "же", "так", "да", "вы", "она", "было", "еще")
-
-
     val text: RDD[(String, Int)] = parse(input = input, stop = stop)
 
     println("Top50 most common words: ")
@@ -30,8 +29,6 @@ object LabTwo {
     println("Top50 least common words: ")
     val least: Array[(String, Int)] = popular(text = text, ascending = true)
     least.foreach(println)
-
-
   }
 
   private def popular(text: RDD[(String, Int)], ascending: Boolean): Array[(String, Int)] = {
