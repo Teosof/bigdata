@@ -1,12 +1,14 @@
 package LabTwo
 
+import java.io._
 import org.apache.log4j.Level.WARN
 import org.apache.log4j.LogManager
 import org.apache.spark.rdd.RDD
 import org.apache.spark.{SparkConf, SparkContext}
+import org.tartarus.snowball.SnowballStemmer
 
 object LabTwo {
-  val PATH: String = "src/main/scala/LabTwo"
+  val PATH: String = "src/main/data"
   val NODES: Int = 3
 
   // TODO: map partions
@@ -16,19 +18,30 @@ object LabTwo {
     //    val ssc = new StreamingContext(conf, Seconds(1))
     LogManager.getRootLogger.setLevel(WARN)
 
-    val input: RDD[String] = sc.textFile(s"$PATH/var.txt")
+    val book: RDD[String] = sc.textFile(s"$PATH/var.txt")
     //    val source: BufferedSource = Source.fromFile(s"$PATH/stop.txt")
     //    val stop: Array[String] = try source.mkString.split("\n") finally source.close()
     val stop: Array[String] = Array("бы", "он", "быть", "в", "весь", "вот", "все", "всей", "что", "он", "как", "но", "это", "не", "на", "его", "же", "так", "да", "вы", "она", "было", "еще")
-    val text: RDD[(String, Int)] = parse(input = input, stop = stop)
+    val text: RDD[(String, Int)] = parse(input = book, stop = stop)
 
-    println("Top50 most common words: ")
-    val most: Array[(String, Int)] = popular(text = text, ascending = false)
-    most.foreach(println)
+    //    println("Top50 most common words: ")
+    //    val most: Array[(String, Int)] = popular(text = text, ascending = false)
+    //    most.foreach(println)
+    //
+    //    println("Top50 least common words: ")
+    //    val least: Array[(String, Int)] = popular(text = text, ascending = true)
+    //    least.foreach(println)
 
-    println("Top50 least common words: ")
-    val least: Array[(String, Int)] = popular(text = text, ascending = true)
-    least.foreach(println)
+    val stemClass = Class.forName("org.tartarus.snowball.ext.russianStemmer")
+    val stemmer = stemClass.newInstance.asInstanceOf[SnowballStemmer]
+    var reader = new BufferedReader(new InputStreamReader(new FileInputStream(s"$PATH/var.txt")))
+
+    val input = new StringBuilder
+
+    var outstream = null
+
+    var output = new BufferedWriter(new OutputStreamWriter(outstream))
+    output.flush()
   }
 
   private def popular(text: RDD[(String, Int)], ascending: Boolean): Array[(String, Int)] = {
