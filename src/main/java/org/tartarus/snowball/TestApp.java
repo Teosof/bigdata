@@ -24,7 +24,7 @@ public class TestApp {
 
         StringBuilder input = new StringBuilder();
 
-        OutputStream outstream = System.out;
+        OutputStream outstream;
 
         if (args.length > 2) {
             if (args.length >= 4 && args[2].equals("-o")) {

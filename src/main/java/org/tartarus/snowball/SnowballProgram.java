@@ -179,7 +179,7 @@ public class SnowballProgram {
         while (true) {
             int k = i + ((j - i) >> 1);
             int diff = 0;
-            int common = common_i < common_j ? common_i : common_j; // smaller
+            int common = Math.min(common_i, common_j); // smaller
             Among w = v[k];
             int i2;
             for (i2 = common; i2 < w.s_size; i2++) {
@@ -217,8 +217,7 @@ public class SnowballProgram {
                 if (w.method == null) return w.result;
                 boolean res;
                 try {
-                    Object resobj = w.method.invoke(w.methodobject,
-                            new Object[0]);
+                    Object resobj = w.method.invoke(w.methodobject);
                     res = resobj.toString().equals("true");
                 } catch (InvocationTargetException e) {
                     res = false;
@@ -236,7 +235,7 @@ public class SnowballProgram {
     }
 
     // find_among_b is for backwards processing. Same comments apply
-    protected int find_among_b(Among v[], int v_size) {
+    protected int find_among_b(Among[] v, int v_size) {
         int i = 0;
         int j = v_size;
 
@@ -251,7 +250,7 @@ public class SnowballProgram {
         while (true) {
             int k = i + ((j - i) >> 1);
             int diff = 0;
-            int common = common_i < common_j ? common_i : common_j;
+            int common = Math.min(common_i, common_j);
             Among w = v[k];
             int i2;
             for (i2 = w.s_size - 1 - common; i2 >= 0; i2--) {
@@ -285,8 +284,7 @@ public class SnowballProgram {
 
                 boolean res;
                 try {
-                    Object resobj = w.method.invoke(w.methodobject,
-                            new Object[0]);
+                    Object resobj = w.method.invoke(w.methodobject);
                     res = resobj.toString().equals("true");
                 } catch (InvocationTargetException e) {
                     res = false;
