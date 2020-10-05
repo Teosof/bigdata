@@ -30,12 +30,24 @@ object LabTwo {
     //    val least: Array[(String, Int)] = popular(text = text, ascending = true)
     //    least.foreach(println)
 
-    val stemmer = new russianStemmer
-    stemmer.setCurrent("книга и книженция, книга и книжечка, книга и книгище")
-    if (stemmer.stem) {
-      val stemText: String = stemmer.getCurrent
-      println(stemText)
-    }
+    val stemmed: RDD[(String, Int)] = text
+      .map(w => stemming(w._1) -> 1)
+      .reduceByKey(_ + _)
+
+    println("Top50 most common words after stemming: ")
+    val mostStemmed: Array[(String, Int)] = popular(text = stemmed, ascending = false)
+    mostStemmed.foreach(println)
+
+    println("Top50 least common words after stemming: ")
+    val leastStemmed: Array[(String, Int)] = popular(text = stemmed, ascending = true)
+    leastStemmed.foreach(println)
+  }
+
+  private def stemming(word: String): String = {
+    val stemmer: russianStemmer = new russianStemmer
+    stemmer.setCurrent(word)
+    stemmer.stem
+    stemmer.getCurrent
   }
 
   private def popular(text: RDD[(String, Int)], ascending: Boolean): Array[(String, Int)] = {
@@ -45,7 +57,7 @@ object LabTwo {
   private def parse(book: RDD[String], stop: Array[String]): RDD[(String, Int)] = book
     .flatMap(_.toLowerCase.split(" ")
       .filter(word => word.length > 1 && !stop.contains(word)))
-    .map(_.replaceAll("[,.!?\"«» “–]", ""))
+    .map(_.replaceAll("[;,.!?\"«» “–]", ""))
     .map(word => (word, 1))
     .reduceByKey(_ + _)
 }
