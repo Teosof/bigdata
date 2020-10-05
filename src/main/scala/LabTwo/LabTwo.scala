@@ -10,16 +10,13 @@ object LabTwo {
   val PATH: String = "src/main/data"
   val NODES: Int = 3
 
-  // TODO: map partions
   def main(args: Array[String]): Unit = {
     val conf: SparkConf = new SparkConf().setAppName("Lab2").setMaster(s"local[$NODES]")
     val sc: SparkContext = new SparkContext(conf)
     LogManager.getRootLogger.setLevel(WARN)
 
     val book: RDD[String] = sc.textFile(s"$PATH/var.txt")
-    //    val source: BufferedSource = Source.fromFile(s"$PATH/stop.txt")
-    //    val stop: Array[String] = try source.mkString.split("\n") finally source.close()
-    val stop: Array[String] = Array("бы", "он", "быть", "в", "весь", "вот", "все", "всей", "что", "он", "как", "но", "это", "не", "на", "его", "же", "так", "да", "вы", "она", "было", "еще")
+    val stop: Array[String] = sc.textFile(s"$PATH/stop.txt").collect()
     val text: RDD[(String, Int)] = parse(book = book, stop = stop)
 
     //    println("Top50 most common words: ")
@@ -31,7 +28,7 @@ object LabTwo {
     //    least.foreach(println)
 
     val stemmed: RDD[(String, Int)] = text
-      .map(w => stemming(w._1) -> 1)
+      .mapPartitions(iterator => stemming(iterator))
       .reduceByKey(_ + _)
 
     println("Top50 most common words after stemming: ")
@@ -43,11 +40,13 @@ object LabTwo {
     leastStemmed.foreach(println)
   }
 
-  private def stemming(word: String): String = {
+  private def stemming(iter: Iterator[(String, Int)]): Iterator[(String, Int)] = {
     val stemmer: russianStemmer = new russianStemmer
-    stemmer.setCurrent(word)
-    stemmer.stem
-    stemmer.getCurrent
+    iter.map(w => {
+      stemmer.setCurrent(w._1)
+      stemmer.stem
+      stemmer.getCurrent
+    } -> 1)
   }
 
   private def popular(text: RDD[(String, Int)], ascending: Boolean): Array[(String, Int)] = {
@@ -56,8 +55,8 @@ object LabTwo {
 
   private def parse(book: RDD[String], stop: Array[String]): RDD[(String, Int)] = book
     .flatMap(_.toLowerCase.split(" ")
+      .map(_.replaceAll("[;,.!?\"«» “–]", ""))
       .filter(word => word.length > 1 && !stop.contains(word)))
-    .map(_.replaceAll("[;,.!?\"«» “–]", ""))
     .map(word => (word, 1))
     .reduceByKey(_ + _)
 }
