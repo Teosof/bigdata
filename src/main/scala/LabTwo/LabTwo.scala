@@ -19,34 +19,39 @@ object LabTwo {
     val stop: Array[String] = sc.textFile(s"$PATH/stop.txt").collect()
     val text: RDD[(String, Int)] = parse(book = book, stop = stop)
 
-    //    println("Top50 most common words: ")
-    //    val most: Array[(String, Int)] = popular(text = text, ascending = false)
-    //    most.foreach(println)
+    println("Top50 most common words: ")
+    val most: Array[(String, Int)] = popular(text = text, ascending = false)
+    most.foreach(println)
 
-    //    println("Top50 least common words: ")
-    //    val least: Array[(String, Int)] = popular(text = text, ascending = true)
-    //    least.foreach(println)
+    println("Top50 least common words: ")
+    val least: Array[(String, Int)] = popular(text = text, ascending = true)
+    least.foreach(println)
 
-    val stemmed: RDD[(String, Int)] = text
+    val stemmed: RDD[((String, Iterable[String]), Int)] = text
       .mapPartitions(iterator => stemming(iterator))
-      .reduceByKey(_ + _)
+      .groupBy(_._2)
+      .map(w => (w._1, w._2.map(i => i._1._1)) -> w._2.size)
 
-    println("Top50 most common words after stemming: ")
-    val mostStemmed: Array[(String, Int)] = popular(text = stemmed, ascending = false)
+    println("\n Top50 most common stems: ")
+    val mostStemmed: Array[((String, Iterable[String]), Int)] = stemmed
+      .sortBy(_._2, ascending = false)
+      .take(50)
     mostStemmed.foreach(println)
 
-    println("Top50 least common words after stemming: ")
-    val leastStemmed: Array[(String, Int)] = popular(text = stemmed, ascending = true)
+    println("\n Top50 least common stems: ")
+    val leastStemmed: Array[((String, Iterable[String]), Int)] = stemmed
+      .sortBy(_._2, ascending = true)
+      .take(50)
     leastStemmed.foreach(println)
   }
 
-  private def stemming(iter: Iterator[(String, Int)]): Iterator[(String, Int)] = {
+  private def stemming(iter: Iterator[(String, Int)]): Iterator[((String, Int), String)] = {
     val stemmer: russianStemmer = new russianStemmer
-    iter.map(w => {
+    iter.map(w => (w._1, 1) -> {
       stemmer.setCurrent(w._1)
       stemmer.stem
       stemmer.getCurrent
-    } -> 1)
+    })
   }
 
   private def popular(text: RDD[(String, Int)], ascending: Boolean): Array[(String, Int)] = {
@@ -55,7 +60,7 @@ object LabTwo {
 
   private def parse(book: RDD[String], stop: Array[String]): RDD[(String, Int)] = book
     .flatMap(_.toLowerCase.split(" ")
-      .map(_.replaceAll("[;,.!?\"«» “–]", ""))
+      .map(_.replaceAll("[,.!?\"«» “–]", ""))
       .filter(word => word.length > 1 && !stop.contains(word)))
     .map(word => (word, 1))
     .reduceByKey(_ + _)
