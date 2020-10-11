@@ -30,7 +30,7 @@ object LabTwo {
     val stemmed: RDD[((String, Iterable[String]), Int)] = text
       .mapPartitions(stemming)
       .groupBy(_._2)
-      .map(w => (w._1, w._2.map(_._1._1)) -> w._2.size)
+      .map(w => (w._1, w._2.map(i => i._1._1)) -> w._2.map(i => i._1._2).sum)
 
     println("\n Top50 most common stems: ")
     val mostStemmed: Array[((String, Iterable[String]), Int)] = stemmed
@@ -47,7 +47,7 @@ object LabTwo {
 
   private def stemming(iter: Iterator[(String, Int)]): Iterator[((String, Int), String)] = {
     val stemmer: russianStemmer = new russianStemmer
-    iter.map(w => (w._1, 1) -> {
+    iter.map(w => (w._1, w._2) -> {
       stemmer.setCurrent(w._1)
       stemmer.stem
       stemmer.getCurrent
