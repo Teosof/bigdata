@@ -3,6 +3,9 @@ package LabThree
 import org.apache.log4j.Level.WARN
 import org.apache.log4j.LogManager
 import org.apache.spark.sql.{DataFrame, Dataset, Row, SparkSession}
+import vegas.DSL.ExtendedUnitSpecBuilder
+import vegas._
+import vegas.sparkExt._
 
 
 object LabThree {
@@ -28,7 +31,15 @@ object LabThree {
 
     //    df.printSchema()
     //    df.select("Gender").show()
-    df.groupBy("Gender").count().show()
+    //    df.groupBy("Gender").count().show()
 
+    //    df.groupBy("Child's First Name").count().show()
+
+    val plot: ExtendedUnitSpecBuilder = Vegas("Some histogram", width = 400.0, height = 300.0)
+      .withDataFrame(df)
+      .encodeX("field_x", Nom)
+      .encodeY("field_y", Quant)
+      .mark(Bar)
+    plot.show
   }
 }

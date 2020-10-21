@@ -25,7 +25,8 @@
             <groupId>org.apache.spark</groupId>
             <artifactId>spark-sql_2.11</artifactId>
             <version>2.4.7</version>
-        </dependency><!-- https://mvnrepository.com/artifact/org.apache.spark/spark-mllib -->
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.apache.spark/spark-mllib -->
         <dependency>
             <groupId>org.apache.spark</groupId>
             <artifactId>spark-mllib_2.11</artifactId>
@@ -36,6 +37,12 @@
         <dependency>
             <groupId>org.vegas-viz</groupId>
             <artifactId>vegas_2.11</artifactId>
+            <version>0.3.11</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.vegas-viz/vegas-spark -->
+        <dependency>
+            <groupId>org.vegas-viz</groupId>
+            <artifactId>vegas-spark_2.11</artifactId>
             <version>0.3.11</version>
         </dependency>
     </dependencies>
