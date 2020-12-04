@@ -3,7 +3,6 @@ package LabThree
 import org.apache.log4j.Level.WARN
 import org.apache.log4j.LogManager
 import org.apache.spark.sql.{DataFrame, Dataset, Row, SparkSession}
-import vegas.DSL.ExtendedUnitSpecBuilder
 import vegas._
 import vegas.sparkExt._
 
@@ -25,21 +24,28 @@ object LabThree {
       .option("delimiter", ",")
       .load(s"$PATH/var.csv")
 
+    df.show(false)
+
+    val plot1 = Vegas("Job_Info").
+      withDataFrame(df).
+      encodeX("Dept", Nom).
+      encodeY("Annual_Rt", Quant).
+      mark(Bar)
+
+    plot1.show
+
+    val plot2 = Vegas("Job_Info").
+      withDataFrame(df).
+      encodeX("Unit", Nom).
+      encodeY("Hrly_Rate", Quant).
+      mark(Bar)
+
+    plot2.show
+
     //    val df: Dataset[String] = spark.sql(s"SELECT * FROM csv.`$PATH/var.csv`").toJSON
     //    val df: Array[Row] = spark.sql(s"SELECT * FROM csv.`$PATH/var.csv`").collect()
     //    val df: DataFrame = spark.sql(s"SELECT * FROM csv.`$PATH/var.csv`")
 
-    //    df.printSchema()
-    //    df.select("Gender").show()
-    //    df.groupBy("Gender").count().show()
-
-    //    df.groupBy("Child's First Name").count().show()
-
-    val plot: ExtendedUnitSpecBuilder = Vegas("Some histogram", width = 400.0, height = 300.0)
-      .withDataFrame(df)
-      .encodeX("field_x", Nom)
-      .encodeY("field_y", Quant)
-      .mark(Bar)
-    plot.show
+    
   }
 }
