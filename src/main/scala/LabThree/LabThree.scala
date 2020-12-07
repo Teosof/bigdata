@@ -2,12 +2,10 @@ package LabThree
 
 import org.apache.log4j.Level.WARN
 import org.apache.log4j.LogManager
+import org.apache.spark.sql.functions.{countDistinct, _}
 import org.apache.spark.sql.{DataFrame, SparkSession}
-import org.apache.spark.sql.functions.countDistinct
-import org.apache.spark.sql.functions._
 import vegas._
 import vegas.sparkExt._
-import vegas.spec.Spec.FontStyleEnums.Normal
 
 
 object LabThree {
