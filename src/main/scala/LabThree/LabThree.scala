@@ -2,8 +2,7 @@ package LabThree
 
 import org.apache.log4j.Level.WARN
 import org.apache.log4j.LogManager
-import org.apache.spark.sql.{DataFrame, Dataset, Row, SparkSession}
-import vegas.DSL.ExtendedUnitSpecBuilder
+import org.apache.spark.sql.{DataFrame, SparkSession}
 import vegas._
 import vegas.sparkExt._
 
@@ -19,27 +18,38 @@ object LabThree {
       .getOrCreate
     LogManager.getRootLogger.setLevel(WARN)
 
-    val df: DataFrame = spark.read
+    val dataframe: DataFrame = spark.read
       .format("csv")
       .option("header", "true")
       .option("delimiter", ",")
       .load(s"$PATH/var.csv")
 
-    //    val df: Dataset[String] = spark.sql(s"SELECT * FROM csv.`$PATH/var.csv`").toJSON
-    //    val df: Array[Row] = spark.sql(s"SELECT * FROM csv.`$PATH/var.csv`").collect()
-    //    val df: DataFrame = spark.sql(s"SELECT * FROM csv.`$PATH/var.csv`")
+    //    val dataframe: Dataset[String] = spark.sql(s"SELECT * FROM csv.`$PATH/var.csv`").toJSON
+    //    val dataframe: Array[Row] = spark.sql(s"SELECT * FROM csv.`$PATH/var.csv`").collect()
+    //    val dataframe: DataFrame = spark.sql(s"SELECT * FROM csv.`$PATH/var.csv`")
 
-    //    df.printSchema()
-    //    df.select("Gender").show()
-    //    df.groupBy("Gender").count().show()
+    //    dataframe.printSchema()
+    //    dataframe.select("Gender").show()
+    //    dataframe.groupBy("Gender").count().show()
 
-    //    df.groupBy("Child's First Name").count().show()
+    //    dataframe.select("*").show()
 
-    val plot: ExtendedUnitSpecBuilder = Vegas("Some histogram", width = 400.0, height = 300.0)
-      .withDataFrame(df)
-      .encodeX("field_x", Nom)
-      .encodeY("field_y", Quant)
+    //    dataframe.groupBy("Child's First Name").count().show()
+
+    //    val plot = Vegas("Some plot", width = 400.0, height = 300.0)
+    //      .withDataFrame(dataframe)
+    //      .encodeX("field_x", Nom)
+    //      .encodeY("field_y", Quant, aggregate = AggOps.Sum)
+    //      .encodeColor(field = "field_t", dataType = Nominal,
+    //        legend = Legend(orient = "left", title = "Type"))
+    //      .encodeDetailFields(Field(field = "field_t", dataType = Nominal))
+    //      .mark(Bar)
+    //      .configMark(stacked = StackOffset.Zero)
+    //        plot.show
+    val plot: Unit = Vegas("approval date")
+      .withDataFrame(dataframe)
       .mark(Bar)
-    plot.show
+      .encodeX("Hi Roman", Quant, bin = Bin(maxbins = 20.0), sortOrder = SortOrder.Desc)
+      .show
   }
 }
