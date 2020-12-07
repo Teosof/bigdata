@@ -3,8 +3,11 @@ package LabThree
 import org.apache.log4j.Level.WARN
 import org.apache.log4j.LogManager
 import org.apache.spark.sql.{DataFrame, SparkSession}
+import org.apache.spark.sql.functions.countDistinct
+import org.apache.spark.sql.functions._
 import vegas._
 import vegas.sparkExt._
+import vegas.spec.Spec.FontStyleEnums.Normal
 
 
 object LabThree {
@@ -24,32 +27,36 @@ object LabThree {
       .option("delimiter", ",")
       .load(s"$PATH/var.csv")
 
-    //    val dataframe: Dataset[String] = spark.sql(s"SELECT * FROM csv.`$PATH/var.csv`").toJSON
-    //    val dataframe: Array[Row] = spark.sql(s"SELECT * FROM csv.`$PATH/var.csv`").collect()
-    //    val dataframe: DataFrame = spark.sql(s"SELECT * FROM csv.`$PATH/var.csv`")
+    dataframe.show(false)
 
-    //    dataframe.printSchema()
-    //    dataframe.select("Gender").show()
-    //    dataframe.groupBy("Gender").count().show()
-
-    //    dataframe.select("*").show()
-
-    //    dataframe.groupBy("Child's First Name").count().show()
-
-    //    val plot = Vegas("Some plot", width = 400.0, height = 300.0)
-    //      .withDataFrame(dataframe)
-    //      .encodeX("field_x", Nom)
-    //      .encodeY("field_y", Quant, aggregate = AggOps.Sum)
-    //      .encodeColor(field = "field_t", dataType = Nominal,
-    //        legend = Legend(orient = "left", title = "Type"))
-    //      .encodeDetailFields(Field(field = "field_t", dataType = Nominal))
-    //      .mark(Bar)
-    //      .configMark(stacked = StackOffset.Zero)
-    //        plot.show
-    val plot: Unit = Vegas("approval date")
+    // Correlation between Ethnicity and Count
+    Vegas("Children_Info")
       .withDataFrame(dataframe)
+      .encodeX(field = "Ethnicity", dataType = Nominal)
+      .encodeY(field = "Count", dataType = Quantitative, aggregate = AggOps.Max)
       .mark(Bar)
-      .encodeX("Hi Roman", Quant, bin = Bin(maxbins = 20.0), sortOrder = SortOrder.Desc)
       .show
+
+    // Correlation between Ethnicity and Rank
+    Vegas("Children_Info")
+      .withDataFrame(dataframe)
+      .encodeX(field = "Ethnicity", dataType = Nominal)
+      .encodeY(field = "Rank", dataType = Quantitative, aggregate = AggOps.Mean)
+      .encodeColor(field = "Ethnicity", dataType = Nominal)
+      .mark(Circle)
+      .show
+
+    // Correlation between Count and Rank
+    Vegas("Children_Info")
+      .withDataFrame(dataframe)
+      .encodeX(field = "Count", dataType = Quantitative, sortOrder = SortOrder.Asc)
+      .encodeY(field = "Rank", dataType = Quantitative)
+      .mark(Line)
+      .show
+
+    // Number of unique ethnic groups
+    dataframe.agg(countDistinct("Ethnicity")).show()
+    // Top 20 most popular names
+    dataframe.groupBy("Child's First Name").count().sort(col("count").desc).show()
   }
 }
