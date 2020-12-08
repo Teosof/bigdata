@@ -27,15 +27,13 @@ object LabThree {
 
     dataframe.show(false)
 
-    // Correlation between Ethnicity and Count
     Vegas("Children_Info")
       .withDataFrame(dataframe)
-      .encodeX(field = "Ethnicity", dataType = Nominal)
+      .encodeX(field = "Year of Birth", dataType = Nominal)
       .encodeY(field = "Count", dataType = Quantitative, aggregate = AggOps.Max)
       .mark(Bar)
       .show
 
-    // Correlation between Ethnicity and Rank
     Vegas("Children_Info")
       .withDataFrame(dataframe)
       .encodeX(field = "Ethnicity", dataType = Nominal)
@@ -44,16 +42,22 @@ object LabThree {
       .mark(Circle)
       .show
 
-    // Correlation between Count and Rank
     Vegas("Children_Info")
       .withDataFrame(dataframe)
       .encodeX(field = "Count", dataType = Quantitative, sortOrder = SortOrder.Asc)
-      .encodeY(field = "Rank", dataType = Quantitative)
-      .mark(Line)
+      .encodeY(field = "Gender", dataType = Nominal)
+      .mark(Bar)
+      .show
+
+    Vegas("Children_Info")
+      .withDataFrame(dataframe)
+      .encodeX(field = "Rank", dataType = Quantitative, sortOrder = SortOrder.Asc)
+      .encodeY(field = "Gender", dataType = Nominal)
+      .mark(Bar)
       .show
 
     // Number of unique ethnic groups
-    dataframe.agg(countDistinct("Ethnicity")).show()
+    dataframe.agg(countDistinct("Year of Birth")).show()
     // Top 20 most popular names
     dataframe.groupBy("Child's First Name").count().sort(col("count").desc).show()
   }
