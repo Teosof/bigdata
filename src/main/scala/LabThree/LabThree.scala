@@ -24,14 +24,14 @@ object LabThree {
       .option("header", "true")
       .option("delimiter", ",")
       .load(s"$PATH/var.csv")
+      .withColumn("Child's First Name", lower(col("Child's First Name")));
 
-    dataframe.show(false)
 
     Vegas("Children_Info")
       .withDataFrame(dataframe)
       .encodeX(field = "Year of Birth", dataType = Nominal)
       .encodeY(field = "Count", dataType = Quantitative, aggregate = AggOps.Max)
-      .mark(Bar)
+      .mark(Line)
       .show
 
     Vegas("Children_Info")
@@ -49,16 +49,13 @@ object LabThree {
       .mark(Bar)
       .show
 
-    Vegas("Children_Info")
-      .withDataFrame(dataframe)
-      .encodeX(field = "Rank", dataType = Quantitative, sortOrder = SortOrder.Asc)
-      .encodeY(field = "Gender", dataType = Nominal)
-      .mark(Bar)
-      .show
-
     // Number of unique ethnic groups
-    dataframe.agg(countDistinct("Year of Birth")).show()
+    dataframe.agg(countDistinct("Year of Birth") as "Number of years").show()
     // Top 20 most popular names
-    dataframe.groupBy("Child's First Name").count().sort(col("count").desc).show()
+    dataframe
+      .groupBy("Child's First Name")
+      .agg(sum("Count") as "count")
+      .sort(col("count").desc)
+      .show()
   }
 }
