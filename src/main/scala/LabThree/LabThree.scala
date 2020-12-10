@@ -24,8 +24,9 @@ object LabThree {
       .option("header", "true")
       .option("delimiter", ",")
       .load(s"$PATH/var.csv")
-      .withColumn("Child's First Name", lower(col("Child's First Name")));
+      .withColumn("Child's First Name", lower(col("Child's First Name")))
 
+    dataframe.show(false)
 
     Vegas("Children_Info")
       .withDataFrame(dataframe)
