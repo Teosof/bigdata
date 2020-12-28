@@ -78,7 +78,8 @@ object LabFour {
       .transform(test)
     prediction
       .select("Ethnicity", "Count", "Rank", "label", "prediction")
-      .show(20)
+      .distinct()
+      .show(2000)
 
     // Select (prediction, label) and compute accuracy.
     val evaluator: MulticlassClassificationEvaluator = new MulticlassClassificationEvaluator()
